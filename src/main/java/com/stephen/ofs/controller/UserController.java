@@ -9,9 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+
 @Controller
 @Slf4j
-@RequestMapping(value="/user")
+@RequestMapping(value = "/user")
 public class UserController {
 
     @Autowired
@@ -20,7 +21,7 @@ public class UserController {
     @Autowired
     RedisTemplate redisTemplate;
 
-    @RequestMapping(value="/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String goUploadImg(String customerId) {
 
         OfsUser user = userDao.findCustomerById(Integer.parseInt(customerId));
