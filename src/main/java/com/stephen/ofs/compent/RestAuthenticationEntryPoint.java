@@ -1,6 +1,8 @@
 package com.stephen.ofs.compent;
 
 import cn.hutool.json.JSONUtil;
+import com.stephen.ofs.constant.ErrorCode;
+import com.stephen.ofs.entity.model.CommonResult;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +22,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().println(JSONUtil.parse(JSONUtil.createObj().putOnce("401", "not login")));
+        response.getWriter().println(JSONUtil.parse(new CommonResult(ErrorCode.UNAUTHORIZED)));
         response.getWriter().flush();
     }
 }

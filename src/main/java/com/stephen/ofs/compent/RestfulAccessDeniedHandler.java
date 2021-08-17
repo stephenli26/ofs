@@ -1,6 +1,8 @@
 package com.stephen.ofs.compent;
 
 import cn.hutool.json.JSONUtil;
+import com.stephen.ofs.constant.ErrorCode;
+import com.stephen.ofs.entity.model.CommonResult;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +24,7 @@ public class RestfulAccessDeniedHandler implements AccessDeniedHandler {
             AccessDeniedException e) throws IOException, ServletException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().println(JSONUtil.parse(JSONUtil.createObj().putOnce("403", "no access denied")));
+        response.getWriter().println(JSONUtil.parse(new CommonResult(ErrorCode.NOT_ACCESSIBLE)));
         response.getWriter().flush();
     }
 }

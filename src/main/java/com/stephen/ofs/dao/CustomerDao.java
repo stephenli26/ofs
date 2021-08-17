@@ -1,6 +1,6 @@
 package com.stephen.ofs.dao;
 
-import com.stephen.ofs.dao.entity.Customer;
+import com.stephen.ofs.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerDao extends JpaRepository<Customer, Integer> {

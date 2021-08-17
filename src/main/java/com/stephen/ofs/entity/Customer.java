@@ -1,4 +1,4 @@
-package com.stephen.ofs.dao.entity;
+package com.stephen.ofs.entity;
 
 import java.io.Serializable;
 import javax.persistence.Column;

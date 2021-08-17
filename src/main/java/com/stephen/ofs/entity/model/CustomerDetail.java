@@ -1,9 +1,9 @@
-package com.stephen.ofs.dao.entity;
+package com.stephen.ofs.entity.model;
 
+import com.stephen.ofs.entity.Customer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

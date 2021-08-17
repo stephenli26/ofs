@@ -1,6 +1,7 @@
 package com.stephen.ofs.compent;
 
-import com.stephen.ofs.service.MyUserDetailService;
+import com.stephen.ofs.dao.CustomerDao;
+import com.stephen.ofs.entity.model.CustomerDetail;
 import com.stephen.ofs.utils.JwtTokenUtil;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -27,17 +28,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
-    //@Autowired
-    //private UserDetailsService userDetailsService;
+    @Autowired
+    private CustomerDao customerDao;
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
-    @Autowired
-    private MyUserDetailService userDetailService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -48,11 +47,15 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
             log.info("checking username:{}", username);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailService.loadUserByUsername(username);
+            if (username != null
+                    && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = new CustomerDetail(customerDao.findByUserName(username));
                 if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, new BCryptPasswordEncoder().encode("123456"), userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, new BCryptPasswordEncoder(),
+                            userDetails.getAuthorities());
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request));
                     log.info("authenticated user:{}", username);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }

@@ -4,7 +4,7 @@ import com.stephen.ofs.compent.JwtAuthenticationTokenFilter;
 import com.stephen.ofs.compent.RestAuthenticationEntryPoint;
 import com.stephen.ofs.compent.RestfulAccessDeniedHandler;
 import com.stephen.ofs.dao.CustomerDao;
-import com.stephen.ofs.service.MyUserDetailService;
+import com.stephen.ofs.entity.model.CustomerDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -21,9 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 //@EnableGlobalMethodSecurity(prePostEnabled = true)  //  启用方法级别的权限认证
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private MyUserDetailService myUserDetailService;
 
     @Autowired
     CustomerDao customerDao;
@@ -67,7 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 禁用缓存
         httpSecurity.headers().cacheControl();
         // 添加JWT filter
-        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter,
+                UsernamePasswordAuthenticationFilter.class);
         //添加自定义未授权和未登录结果返回
         httpSecurity.exceptionHandling()
                 .accessDeniedHandler(restfulAccessDeniedHandler)
@@ -76,7 +74,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(myUserDetailService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(
+                        userName -> new CustomerDetail(customerDao.findByUserName(userName)))
+                .passwordEncoder(passwordEncoder());
     }
 
     @Bean

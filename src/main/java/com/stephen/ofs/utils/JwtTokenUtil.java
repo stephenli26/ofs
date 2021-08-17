@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class JwtTokenUtil {
-    private static final String CLAIM_KEY_USERNAME = "sub";
-    private static final String CLAIM_KEY_CREATED = "created";
+
+    private static final String CLAIM_KEY_USERNAME = "userName";
+    private static final String CLAIM_KEY_CREATED = "create_at";
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.expiration}")
@@ -43,7 +44,7 @@ public class JwtTokenUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            log.info("JWT格式验证失败:{}",token);
+            log.info("JWT格式验证失败:{}", token);
         }
         return claims;
     }
@@ -62,7 +63,7 @@ public class JwtTokenUtil {
         String username;
         try {
             Claims claims = getClaimsFromToken(token);
-            username =  claims.getSubject();
+            username = (String) claims.get(CLAIM_KEY_USERNAME);
         } catch (Exception e) {
             username = null;
         }
