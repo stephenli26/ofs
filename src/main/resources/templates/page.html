@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+      table, tr, td
+      {
+        border:1px solid black;
+      }
+    </style>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+    </script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type : "GET",
+                contentType: "application/json;charset=UTF-8",
+                url : "/ofs/query/data",
+                data : {},
+                success : function(result) {
+                    if (result) {
+                        intiTable(result.list);
+                    }
+                },
+                //请求失败，包含具体的错误信息
+                error : function(e){
+                    console.log(e.status);
+                    console.log(e.responseText);
+                }
+            });
+        });
+
+        function intiTable(list) {
+            var $parent = $("#tableContent"); // 获取节点。的父节点
+            var htmlText = "<table>" +
+                    "<thead>" +
+                    "<td>险种</td>" +
+                    "<td>责任</td>" +
+                    "<td>受益人</td>" +
+                    "</thead><tbody>";
+            var trHTml ="";
+            $.each(list, function (i, val) {
+                var code = val.code;
+                var duty = val.duty;
+                var name = val.name;
+                trHTml += '<tr>' +
+                        '<td data-id = "' + code + '">' + code + '</td>' +
+                        '<td data-id = "' + duty + '">' + duty + '</td>' +
+                        '<td data-id = "' + name + '">' + name + '</td>' +
+                        '</tr>';
+
+            });
+
+            htmlText += trHTml;
+            htmlText += "</tbody></table>";
+            $parent.append($(htmlText)); // 添加到节点中，使之能在网页中显示
+
+            dealTable();
+        }
+
+        function dealTable() {
+            var spanNum = $($("#tableContent tbody tr")[0]).find("td").length;//列数
+            var  rowNum = $("#tableContent tbody tr").length;//行数
+
+            for(var i =0; i < spanNum -1; i++) {//遍历列
+                var spanArray = [];
+                for(var j =0; j < rowNum; j++) {//遍历行
+                    spanArray.push($($("#tableContent tbody tr")[j]).find("td")[i]);
+                }
+
+                skipLength(spanArray, i)
+            }
+
+            $(".remove").remove();
+            var alltds = $("#tableContent tbody tr").find("td")
+            for (var p =0; p< alltds.length; p++) {
+                var tdObj = $(alltds[p]);
+                var rowspans = tdObj.attr("rowspans");
+                if (rowspans) {
+                    tdObj.attr('rowspan', rowspans);
+                }
+            }
+
+        }
+
+        function skipLength(spanArray, rowIndex) {
+            for(var i =0; i< spanArray.length; i++) {
+                var itemObj = $(spanArray[i]);
+                var itemId = getPreId(itemObj, itemObj.attr("data-id"), rowIndex);
+                var skipNum = 0;
+                for(var j =i+1; j< spanArray.length; j++) {
+                    var itemTempObj = $(spanArray[j]);
+                    var itemTempId = getPreId(itemTempObj, itemTempObj.attr("data-id"), rowIndex);
+
+                    if (itemId == itemTempId) {
+                        itemTempObj.addClass('remove');
+                        skipNum++;
+                    }
+                }
+                if (skipNum ==0) {
+                    continue;
+                }
+
+                $(spanArray[i]).attr('rowspans',skipNum + 1);
+                i += skipNum;
+            }
+        }
+
+        function getPreId(obj, id, rowIndex) {
+            if (rowIndex == 0) {
+                return id;
+            }
+            var prevObj = obj.parent().children()[rowIndex - 1];
+            if (prevObj) {
+                id += $(prevObj).attr("data-id");
+                getPreId($(prevObj), id, rowIndex - 1)
+            }
+            return id;
+        }
+    </script>
+</head>
+<body>
+    <div id="tableContent">
+    <table>
+        <thead>
+
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    </div>
+</body>
+</html>

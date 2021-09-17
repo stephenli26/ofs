@@ -10,12 +10,12 @@ import com.stephen.ofs.utils.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-
-@RestController
+@Controller
 @Slf4j
 @RequestMapping(value = "/user")
 public class UserController {
@@ -27,6 +27,7 @@ public class UserController {
     JwtTokenUtil jwtTokenUtil;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @ResponseBody
     public CommonResult goUploadImg(String userName, String password) {
         Customer customer = customerDao.findByUserName(userName);
         if (customer != null) {
@@ -40,8 +41,8 @@ public class UserController {
         return new CommonResult();
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public CommonResult test() {
-        return new CommonResult();
+    @RequestMapping(value = "/login/page", method = RequestMethod.GET)
+    public String test() {
+        return "login";
     }
 }
